@@ -8,8 +8,8 @@ import {
   ValidateNested,
   IsArray,
 } from 'class-validator';
-import { Nationality, Gender } from '../types/monster.type';
-import { Type } from 'class-transformer';
+// import { Type } from 'class-transformer';
+import { Gender, Nationality } from './monster/types/monster.type';
 
 export class MonsterNameDto {
   @IsString()

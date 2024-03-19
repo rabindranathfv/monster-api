@@ -3,6 +3,7 @@ import { MonsterService } from './monster.service';
 import { MonsterController } from './monster.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Monster, MonsterSchema } from './entities/monster.entity';
+import { CommonModule } from 'src/common/common.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { Monster, MonsterSchema } from './entities/monster.entity';
         schema: MonsterSchema,
       },
     ]),
+    CommonModule,
   ],
   controllers: [MonsterController],
   providers: [MonsterService],

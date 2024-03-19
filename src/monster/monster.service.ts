@@ -1,26 +1,51 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 import { CreateMonsterDto } from './dto/create-monster.dto';
 import { UpdateMonsterDto } from './dto/update-monster.dto';
+import { Monster } from './entities/monster.entity';
 
 @Injectable()
 export class MonsterService {
-  create(createMonsterDto: CreateMonsterDto) {
-    return 'This action adds a new monster';
+  constructor(
+    @InjectModel(Monster.name) private readonly monsterModel: Model<Monster>,
+  ) {}
+
+  async createMonster(createMonsterDto: CreateMonsterDto): Promise<Monster> {
+    try {
+      console.log(
+        '🚀 ~ file: monster.service.ts:15 ~ MonsterService ~ createMonster ~ createMonsterDto:',
+        createMonsterDto,
+      );
+      const newMonster = await this.monsterModel.create(createMonsterDto);
+      return newMonster;
+    } catch (error) {
+      console.log(
+        '🚀 ~ file: monster.service.ts:26 ~ MonsterService ~ createMonster ~ error:',
+        error,
+      );
+    }
   }
 
-  findAll() {
-    return `This action returns all monster`;
+  async findAll(): Promise<Monster[]> {
+    return await this.monsterModel.find().exec();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} monster`;
+  async findOne(id: string): Promise<Monster> {
+    return await this.monsterModel.findById(id).exec();
   }
 
-  update(id: number, updateMonsterDto: UpdateMonsterDto) {
-    return `This action updates a #${id} monster`;
+  async updateMonster(
+    id: string,
+    updateMonsterDto: UpdateMonsterDto,
+  ): Promise<Monster> {
+    return await this.monsterModel.findByIdAndUpdate(id, updateMonsterDto, {
+      new: true,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} monster`;
+  async deleteMonster(id: string): Promise<any> {
+    const monsterDeleted = await this.monsterModel.findByIdAndDelete(id);
+    return monsterDeleted;
   }
 }

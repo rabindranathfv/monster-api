@@ -1,0 +1,16 @@
+version: '3.9'
+
+services:
+  mongo_db:
+    image: mongo:5
+    container_name: mongo_db_monster
+    ports:
+      - 27017:27017
+    environment:
+      - MONGODB_DATABASE=monster-db
+    volumes:
+      - mongomonster:/data/configdb
+      - mongomonster:/data/db
+
+volumes:
+  mongomonster: {}

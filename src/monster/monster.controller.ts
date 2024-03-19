@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Put,
+} from '@nestjs/common';
 import { MonsterService } from './monster.service';
 import { CreateMonsterDto } from './dto/create-monster.dto';
 import { UpdateMonsterDto } from './dto/update-monster.dto';
@@ -9,7 +17,7 @@ export class MonsterController {
 
   @Post()
   create(@Body() createMonsterDto: CreateMonsterDto) {
-    return this.monsterService.create(createMonsterDto);
+    return this.monsterService.createMonster(createMonsterDto);
   }
 
   @Get()
@@ -19,16 +27,26 @@ export class MonsterController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.monsterService.findOne(+id);
+    return this.monsterService.findOne(id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateMonsterDto: UpdateMonsterDto) {
-    return this.monsterService.update(+id, updateMonsterDto);
+    return this.monsterService.updateMonster(id, updateMonsterDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.monsterService.remove(+id);
+  async remove(@Param('id') id: string) {
+    const deletedMonster = await this.monsterService.deleteMonster(id);
+
+    if (!deletedMonster) {
+      return {
+        message: `monster can not be deleted`,
+      };
+    }
+
+    return {
+      message: `monster ${id} named ${deletedMonster.name.first} is delete successfully`,
+    };
   }
 }

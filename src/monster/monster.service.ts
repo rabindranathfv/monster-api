@@ -12,19 +12,20 @@ export class MonsterService {
   ) {}
 
   async createMonster(createMonsterDto: CreateMonsterDto): Promise<Monster> {
-    try {
-      console.log(
-        '🚀 ~ file: monster.service.ts:15 ~ MonsterService ~ createMonster ~ createMonsterDto:',
-        createMonsterDto.name,
-        createMonsterDto,
-      );
-      const monsterInstance = new this.monsterModel(CreateMonsterDto);
-      console.log(
-        '🚀 ~ file: monster.service.ts:22 ~ MonsterService ~ createMonster ~ monsterInstance:',
-        monsterInstance,
-      );
+    console.log(
+      '🚀 ~ file: monster.service.ts:15 ~ MonsterService ~ createMonster ~ createMonsterDto:',
+      createMonsterDto,
+    );
 
-      // const newMonster = await this.monsterModel.create(createMonsterDto);
+    try {
+      // const { name, ...restMonsterDto } = createMonsterDto;
+
+      // const monsterInstance = new this.monsterModel({
+      //   name,
+      //   ...restMonsterDto,
+      // });
+      const monsterInstance = new this.monsterModel(createMonsterDto);
+
       const newMonster = await monsterInstance.save();
       return newMonster;
     } catch (error) {

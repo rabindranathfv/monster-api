@@ -19,7 +19,6 @@ export class MonsterController {
   constructor(private readonly monsterService: MonsterService) {}
 
   @Post()
-  // TODO: add validation Pipe
   async create(@Body() createMonsterDto: CreateMonsterDto) {
     try {
       return await this.monsterService.createMonster(createMonsterDto);
@@ -29,18 +28,10 @@ export class MonsterController {
         error,
       );
 
-      if (error.name === 'MongoError' && error.code === 11000) {
-        // Handle duplicate name error
-        throw new HttpException(
-          'Monster name already exists',
-          HttpStatus.BAD_REQUEST,
-        );
-      } else {
-        throw new HttpException(
-          'Internal Server Error',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
+      throw new HttpException(
+        'Internal Server Error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -71,19 +62,14 @@ export class MonsterController {
         error,
       );
 
-      if (error.name === 'CastError') {
-        throw new HttpException('Invalid monster ID', HttpStatus.BAD_REQUEST);
-      } else {
-        throw new HttpException(
-          'Internal Server Error',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
+      throw new HttpException(
+        'Internal Server Error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   @Put(':id')
-  // TODO: add validation Pipe
   async update(
     @Param('id', ParseMongoIdPipe) id: string,
     @Body() updateMonsterDto: UpdateMonsterDto,
@@ -96,20 +82,10 @@ export class MonsterController {
         error,
       );
 
-      if (error.name === 'CastError') {
-        throw new HttpException('Invalid monster ID', HttpStatus.BAD_REQUEST);
-      } else if (error.name === 'MongoError' && error.code === 11000) {
-        // Handle duplicate name error
-        throw new HttpException(
-          'Monster name already exists',
-          HttpStatus.BAD_REQUEST,
-        );
-      } else {
-        throw new HttpException(
-          'Internal Server Error',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
+      throw new HttpException(
+        'Internal Server Error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -125,7 +101,7 @@ export class MonsterController {
       }
 
       return {
-        message: `monster ${id} named ${deletedMonster.name.first} is delete successfully`,
+        message: `monster ${id} is delete successfully`,
       };
     } catch (error) {
       console.log(
@@ -133,14 +109,10 @@ export class MonsterController {
         error,
       );
 
-      if (error.name === 'CastError') {
-        throw new HttpException('Invalid monster ID', HttpStatus.BAD_REQUEST);
-      } else {
-        throw new HttpException(
-          'Internal Server Error',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
+      throw new HttpException(
+        'Internal Server Error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }

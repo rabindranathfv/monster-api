@@ -8,7 +8,7 @@ import {
   ValidateNested,
   IsArray,
 } from 'class-validator';
-// import { Type } from 'class-transformer';
+import { Type } from 'class-transformer';
 import { Gender, Nationality } from './monster/types/monster.type';
 
 export class MonsterNameDto {
@@ -27,7 +27,8 @@ export class MonsterNameDto {
 
 export class CreateMonsterDto {
   @ValidateNested()
-  // @Type(() => MonsterNameDto) // Ensure transformation for nested object
+  @Type(() => MonsterNameDto)
+  @IsNotEmpty()
   name: MonsterNameDto;
 
   @IsEnum(Gender, { message: 'Invalid gender' })
@@ -35,17 +36,17 @@ export class CreateMonsterDto {
   gender: Gender;
 
   @IsString()
-  @IsOptional()
-  description?: string;
+  @IsNotEmpty()
+  description: string;
 
   @IsArray()
   @IsEnum(Nationality, { each: true, message: 'Invalid nationality' })
-  @IsOptional()
-  nationality?: Nationality[];
+  @IsNotEmpty()
+  nationality: Nationality[];
 
   @IsString()
-  @IsOptional()
-  image?: string;
+  @IsNotEmpty()
+  image: string;
 
   @IsNumber()
   @Min(0)

@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Gender, Nationality } from '../types/monster.type';
 import { Document } from 'mongoose';
 
-export class MonsterNameDto extends Document {
+export class MonsterName extends Document {
   @Prop({ required: true })
   first: string;
 
@@ -16,23 +16,23 @@ export class MonsterNameDto extends Document {
 @Schema({ timestamps: true })
 export class Monster extends Document {
   @Prop({
-    type: MonsterNameDto,
+    // type: { first: String, last: String, title: String },
+    type: MonsterName,
+    required: true,
   })
-  name: MonsterNameDto;
-
-  @Prop({ required: true })
-  title: string;
+  // name: { first: string; last: string; title: string };
+  name: MonsterName;
 
   @Prop({ required: true, enum: Gender })
   gender: Gender;
 
-  @Prop()
+  @Prop({ required: true })
   description: string;
 
-  @Prop({ type: [{ type: String, enum: Nationality }] })
+  @Prop({ type: [{ type: String, enum: Nationality }], required: true })
   nationality: Nationality[];
 
-  @Prop()
+  @Prop({ required: true })
   image: string;
 
   @Prop({ default: 0 })

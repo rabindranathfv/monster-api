@@ -3,17 +3,17 @@ version: '3.9'
 services:
   mongo_db:
     image: mongo:5
-    container_name: mongo_db_monster
+    container_name: mongo_db_monster_test
     ports:
       - 27017:27017
     environment:
-      - MONGODB_DATABASE=monster-db
+      - MONGODB_DATABASE=monster-db-test
     volumes:
-      - mongomonster:/data/configdb
-      - mongomonster:/data/db
+      - mongomonstertest:/data/configdb
+      - mongomonstertest:/data/db
 
   redis:
-    image: redis:7
+    image: redis
     restart: unless-stopped
     ports:
       - 6379:6379
@@ -28,5 +28,6 @@ networks:
     driver: bridge
 
 volumes:
-  mongomonster: {}
-  redis: {}
+  mongomonstertest: {}
+  redis:
+    driver: local

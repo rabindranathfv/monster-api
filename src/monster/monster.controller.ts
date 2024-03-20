@@ -10,11 +10,13 @@ import {
   HttpStatus,
   NotFoundException,
 } from '@nestjs/common';
+
 import { MonsterService } from './monster.service';
 import { CreateMonsterDto } from './dto/create-monster.dto';
 import { UpdateMonsterDto } from './dto/update-monster.dto';
 import { ParseMongoIdPipe } from 'src/common/pipes/parse-mongo-id/parse-mongo-id.pipe';
 import { Monster } from './entities/monster.entity';
+import { sleep } from 'src/common/utils/sleep';
 
 @Controller('monster')
 export class MonsterController {
@@ -28,7 +30,9 @@ export class MonsterController {
   @Get()
   async findAll() {
     try {
-      return await this.monsterService.findAll();
+      const monsters = await this.monsterService.findAll();
+      await sleep(4000);
+      return monsters;
     } catch (error) {
       console.log(
         '🚀 ~ file: monster.controller.ts:51 ~ MonsterController ~ findAll ~ error:',

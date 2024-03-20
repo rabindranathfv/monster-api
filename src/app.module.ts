@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import {
@@ -7,15 +7,16 @@ import {
   CacheModuleOptions,
 } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-redis-store';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+
 import { MonsterModule } from './monster/monster.module';
 import { AppService } from './app.service';
 import { AppController } from './app.controller';
-
+import { RequestIdMiddleware } from './common/middleware/request-id/request-id.middleware';
 import { CommonModule } from './common/common.module';
 
 import { loadConfig } from './config/env.config';
 import { validationSchema } from './config/env-schema.config';
-import { APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -78,4 +79,9 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
     AppService,
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  /* istanbul ignore next */
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(RequestIdMiddleware).forRoutes('*');
+  }
+}

@@ -6,6 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { loadConfig } from './config/env.config';
 import { validationSchema } from './config/env-schema.config';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { validationSchema } from './config/env-schema.config';
       },
     }),
     MonsterModule,
+    CommonModule,
   ],
   controllers: [AppController],
   providers: [AppService],

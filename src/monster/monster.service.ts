@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateMonsterDto } from './dto/create-monster.dto';
@@ -12,28 +17,12 @@ export class MonsterService {
   ) {}
 
   async createMonster(createMonsterDto: CreateMonsterDto): Promise<Monster> {
-    console.log(
-      '🚀 ~ file: monster.service.ts:15 ~ MonsterService ~ createMonster ~ createMonsterDto:',
-      createMonsterDto,
-    );
-
     try {
-      // const { name, ...restMonsterDto } = createMonsterDto;
-
-      // const monsterInstance = new this.monsterModel({
-      //   name,
-      //   ...restMonsterDto,
-      // });
       const monsterInstance = new this.monsterModel(createMonsterDto);
 
       const newMonster = await monsterInstance.save();
       return newMonster;
     } catch (error) {
-      console.log(
-        '🚀 ~ file: monster.service.ts:24 ~ MonsterService ~ createMonster ~ error:',
-        error,
-      );
-
       throw new HttpException(
         'Internal Server Error',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -43,13 +32,8 @@ export class MonsterService {
 
   async findAll(): Promise<Monster[]> {
     try {
-      return await this.monsterModel.find().exec();
+      return await this.monsterModel.find();
     } catch (error) {
-      console.log(
-        '🚀 ~ file: monster.service.ts:43 ~ MonsterService ~ findAll ~ error:',
-        error,
-      );
-
       throw new HttpException(
         'Internal Server Error',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -61,11 +45,6 @@ export class MonsterService {
     try {
       return await this.monsterModel.findById(id);
     } catch (error) {
-      console.log(
-        '🚀 ~ file: monster.service.ts:59 ~ MonsterService ~ findOne ~ error:',
-        error,
-      );
-
       throw new HttpException(
         'Internal Server Error',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -82,11 +61,6 @@ export class MonsterService {
         new: true,
       });
     } catch (error) {
-      console.log(
-        '🚀 ~ file: monster.service.ts:80 ~ MonsterService ~ error:',
-        error,
-      );
-
       throw new HttpException(
         'Internal Server Error',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -96,14 +70,38 @@ export class MonsterService {
 
   async deleteMonster(id: string): Promise<Monster> {
     try {
-      const monsterDeleted = await this.monsterModel.findByIdAndDelete(id);
-      return monsterDeleted;
+      return await this.monsterModel.findByIdAndDelete(id);
     } catch (error) {
-      console.log(
-        '🚀 ~ file: monster.service.ts:97 ~ MonsterService ~ deleteMonster ~ error:',
-        error,
+      throw new HttpException(
+        'Internal Server Error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
+    }
+  }
 
+  async addGold(id: string, amount: number): Promise<Monster> {
+    try {
+      return await this.monsterModel.findByIdAndUpdate(
+        id,
+        { $inc: { goldBalance: amount } },
+        { new: true },
+      );
+    } catch (error) {
+      throw new HttpException(
+        'Internal Server Error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async removeGold(id: string, amount: number): Promise<Monster> {
+    try {
+      return await this.monsterModel.findByIdAndUpdate(
+        id,
+        { $inc: { goldBalance: -amount } },
+        { new: true },
+      );
+    } catch (error) {
       throw new HttpException(
         'Internal Server Error',
         HttpStatus.INTERNAL_SERVER_ERROR,

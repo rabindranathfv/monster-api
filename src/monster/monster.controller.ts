@@ -8,11 +8,13 @@ import {
   Put,
   HttpException,
   HttpStatus,
+  NotFoundException,
 } from '@nestjs/common';
 import { MonsterService } from './monster.service';
 import { CreateMonsterDto } from './dto/create-monster.dto';
 import { UpdateMonsterDto } from './dto/update-monster.dto';
 import { ParseMongoIdPipe } from 'src/common/pipes/parse-mongo-id/parse-mongo-id.pipe';
+import { Monster } from './entities/monster.entity';
 
 @Controller('monster')
 export class MonsterController {
@@ -20,19 +22,7 @@ export class MonsterController {
 
   @Post()
   async create(@Body() createMonsterDto: CreateMonsterDto) {
-    try {
-      return await this.monsterService.createMonster(createMonsterDto);
-    } catch (error) {
-      console.log(
-        '🚀 ~ file: monster.controller.ts:26 ~ MonsterController ~ create ~ error:',
-        error,
-      );
-
-      throw new HttpException(
-        'Internal Server Error',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+    return await this.monsterService.createMonster(createMonsterDto);
   }
 
   @Get()
@@ -54,19 +44,13 @@ export class MonsterController {
 
   @Get(':id')
   async findOne(@Param('id', ParseMongoIdPipe) id: string) {
-    try {
-      return await this.monsterService.findOne(id);
-    } catch (error) {
-      console.log(
-        '🚀 ~ file: monster.controller.ts:68 ~ MonsterController ~ findOne ~ error:',
-        error,
-      );
+    const monster = await this.monsterService.findOne(id);
 
-      throw new HttpException(
-        'Internal Server Error',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+    if (!monster) {
+      throw new NotFoundException(`this monster ${id} doesn't exist`);
     }
+
+    return monster;
   }
 
   @Put(':id')
@@ -74,45 +58,55 @@ export class MonsterController {
     @Param('id', ParseMongoIdPipe) id: string,
     @Body() updateMonsterDto: UpdateMonsterDto,
   ) {
-    try {
-      return await this.monsterService.updateMonster(id, updateMonsterDto);
-    } catch (error) {
-      console.log(
-        '🚀 ~ file: monster.controller.ts:93 ~ MonsterController ~ error:',
-        error,
-      );
+    const monster = await this.monsterService.updateMonster(
+      id,
+      updateMonsterDto,
+    );
 
-      throw new HttpException(
-        'Internal Server Error',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+    if (!monster) {
+      throw new NotFoundException(`this monster ${id} doesn't exist`);
     }
+
+    return monster;
   }
 
   @Delete(':id')
   async remove(@Param('id', ParseMongoIdPipe) id: string) {
-    try {
-      const deletedMonster = await this.monsterService.deleteMonster(id);
+    const deletedMonster = await this.monsterService.deleteMonster(id);
 
-      if (!deletedMonster) {
-        return {
-          message: `monster can not be deleted`,
-        };
-      }
-
-      return {
-        message: `monster ${id} is delete successfully`,
-      };
-    } catch (error) {
-      console.log(
-        '🚀 ~ file: monster.controller.ts:130 ~ MonsterController ~ remove ~ error:',
-        error,
-      );
-
-      throw new HttpException(
-        'Internal Server Error',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+    if (!deletedMonster) {
+      throw new NotFoundException(`this monster ${id} doesn't exist`);
     }
+
+    return {
+      message: `monster ${id} is delete successfully`,
+    };
+  }
+
+  @Post(':id/add-gold')
+  async addGold(
+    @Param('id', ParseMongoIdPipe) id: string,
+    @Body('amount') amount: number,
+  ): Promise<Monster> {
+    const monster = await this.monsterService.addGold(id, amount);
+
+    if (!monster) {
+      throw new NotFoundException(`this monster ${id} doesn't exist`);
+    }
+    return monster;
+  }
+
+  @Post(':id/remove-gold')
+  async removeGold(
+    @Param('id', ParseMongoIdPipe) id: string,
+    @Body('amount') amount: number,
+  ): Promise<Monster> {
+    const monster = await this.monsterService.removeGold(id, amount);
+
+    if (!monster) {
+      throw new NotFoundException(`this monster ${id} doesn't exist`);
+    }
+
+    return monster;
   }
 }

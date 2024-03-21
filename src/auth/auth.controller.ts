@@ -11,8 +11,6 @@ import {
 import { AuthService } from './user/auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
-import { AuthJWTGuard } from './guard/jwt-auth.guard';
-import { Request } from 'express';
 
 @Controller('auth')
 export class AuthController {

@@ -8,6 +8,7 @@ import {
   Put,
   NotFoundException,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { SkipThrottle, Throttle } from '@nestjs/throttler';
 
@@ -18,10 +19,10 @@ import { ApiKeyAuthGuard } from 'src/auth/guard/api-key-auth.guard';
 
 import { ParseMongoIdPipe } from 'src/common/pipes/parse-mongo-id/parse-mongo-id.pipe';
 import { Monster } from './schema/monster.schema';
-import { AuthJWTGuard } from 'src/auth/guard/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 
 @UseGuards(ApiKeyAuthGuard)
-@UseGuards(AuthJWTGuard)
+@UseGuards(JwtAuthGuard)
 @Controller('monster')
 export class MonsterController {
   constructor(private readonly monsterService: MonsterService) {}

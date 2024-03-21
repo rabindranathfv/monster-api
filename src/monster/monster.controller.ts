@@ -18,6 +18,7 @@ import { ApiKeyAuthGuard } from 'src/auth/guard/api-key-auth.guard';
 
 import { ParseMongoIdPipe } from 'src/common/pipes/parse-mongo-id/parse-mongo-id.pipe';
 import { Monster } from './schema/monster.schema';
+import { AuthJWTGuard } from 'src/auth/guard/jwt-auth.guard';
 
 @UseGuards(ApiKeyAuthGuard)
 @Controller('monster')
@@ -30,6 +31,7 @@ export class MonsterController {
     return await this.monsterService.createMonster(createMonsterDto);
   }
 
+  // @UseGuards(AuthJWTGuard)
   @Get()
   async findAll() {
     const monsters = await this.monsterService.findAll();

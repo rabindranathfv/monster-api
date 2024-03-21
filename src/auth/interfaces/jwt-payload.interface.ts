@@ -1,4 +1,3 @@
-import { User } from '../shema/user.schema';
 import { Role } from '../types/user.types';
 
 export interface JwtPayload {

@@ -1,8 +1,18 @@
-import { Controller, Post, Body, UnauthorizedException } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UnauthorizedException,
+  Get,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
 
 import { AuthService } from './user/auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
+import { AuthJWTGuard } from './guard/jwt-auth.guard';
+import { Request } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -30,5 +40,11 @@ export class AuthController {
     }
 
     return userLogin;
+  }
+
+  @UseGuards(AuthJWTGuard)
+  @Get('private')
+  async check(@Req() req: Request) {
+        return 'private working';
   }
 }

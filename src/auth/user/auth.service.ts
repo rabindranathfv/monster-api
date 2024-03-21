@@ -17,6 +17,7 @@ import { JwtPayload } from '../interfaces/jwt-payload.interface';
 import { UserService } from './user.service';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { LoginFail } from '../types/user.types';
+import { mapUserAuth } from '../helpers/use-auth-map.helper';
 
 @Injectable()
 export class AuthService {
@@ -67,7 +68,7 @@ export class AuthService {
       }
 
       if (!compareSync(password, user.password)) {
-        return { password: false };
+        return { password: true };
       }
 
       const token = await this.getJwtToken({
@@ -77,14 +78,7 @@ export class AuthService {
         email: user.email,
       });
 
-      const v = {
-        id: user._id,
-        fullName: user.fullName,
-        role: user.role,
-        email: user.email,
-        token,
-      };
-      return v;
+      return mapUserAuth(user, token);
     } catch (error) {
       throw new HttpException(
         'Internal Server Error',

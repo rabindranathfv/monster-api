@@ -1,15 +1,8 @@
-import {
-  Controller,
-  Post,
-  Body,
-  UnauthorizedException,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Post, Body, UnauthorizedException } from '@nestjs/common';
 
 import { AuthService } from './user/auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
-import { ApiKeyAuthGuard } from './guard/api-key-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -30,7 +23,7 @@ export class AuthController {
       );
     }
 
-    if (!userLogin.password) {
+    if (userLogin.password) {
       throw new UnauthorizedException(
         'Credentials are not valid, please check your password',
       );

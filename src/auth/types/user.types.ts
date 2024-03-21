@@ -1,4 +1,4 @@
-import { User } from '../shema/user.schema';
+import { JwtPayload } from '../interfaces/jwt-payload.interface';
 
 export enum Role {
   ADMIN = 'ADMIN',

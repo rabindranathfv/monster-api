@@ -11,6 +11,7 @@ import { User, UserSchema } from './shema/user.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
+import { RolesGuard } from './guard/roles.guard';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { JwtAuthGuard } from './guard/jwt-auth.guard';
     ApiKeyStrategy,
     JwtStrategy,
     JwtAuthGuard,
+    RolesGuard,
   ],
   exports: [
     AuthService,
@@ -51,6 +53,7 @@ import { JwtAuthGuard } from './guard/jwt-auth.guard';
     PassportModule,
     JwtModule,
     JwtAuthGuard,
+    RolesGuard,
   ],
 })
 export class AuthModule {}

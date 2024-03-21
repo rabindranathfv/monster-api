@@ -12,14 +12,16 @@ import { ParseMongoIdPipe } from 'src/common/pipes/parse-mongo-id/parse-mongo-id
 import { mapUserWithoutPsw } from '../helpers/user-map.helper';
 import { ApiKeyAuthGuard } from '../guard/api-key-auth.guard';
 import { JwtAuthGuard } from '../guard/jwt-auth.guard';
+import { RoleProtected } from '../decorators/role-protected.decorator';
+import { Role } from '../types/user.types';
+import { RolesGuard } from '../guard/roles.guard';
 
-@UseGuards(ApiKeyAuthGuard)
-// @UseGuards(JwtAuthGuard)
+@UseGuards(ApiKeyAuthGuard, JwtAuthGuard, RolesGuard)
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @UseGuards(JwtAuthGuard)
+  @RoleProtected(Role.ADMIN, Role.USER)
   @Get(':id')
   async findOne(@Param('id', ParseMongoIdPipe) id: string) {
     const user = await this.userService.findOne(id);
@@ -31,6 +33,7 @@ export class UserController {
     return mapUserWithoutPsw(user);
   }
 
+  @RoleProtected(Role.ADMIN)
   @Delete(':id')
   async remove(@Param('id', ParseMongoIdPipe) id: string) {
     const user = await this.userService.remove(id);

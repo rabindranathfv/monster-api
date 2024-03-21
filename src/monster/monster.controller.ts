@@ -21,6 +21,7 @@ import { Monster } from './schema/monster.schema';
 import { AuthJWTGuard } from 'src/auth/guard/jwt-auth.guard';
 
 @UseGuards(ApiKeyAuthGuard)
+@UseGuards(AuthJWTGuard)
 @Controller('monster')
 export class MonsterController {
   constructor(private readonly monsterService: MonsterService) {}
@@ -31,7 +32,6 @@ export class MonsterController {
     return await this.monsterService.createMonster(createMonsterDto);
   }
 
-  // @UseGuards(AuthJWTGuard)
   @Get()
   async findAll() {
     const monsters = await this.monsterService.findAll();

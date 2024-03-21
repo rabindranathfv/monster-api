@@ -4,6 +4,7 @@ import { MonsterController } from './monster.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Monster, MonsterSchema } from './schema/monster.schema';
 import { CommonModule } from 'src/common/common.module';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { CommonModule } from 'src/common/common.module';
       },
     ]),
     CommonModule,
+    AuthModule,
   ],
   controllers: [MonsterController],
   providers: [MonsterService],

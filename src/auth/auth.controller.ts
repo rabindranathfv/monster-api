@@ -41,10 +41,4 @@ export class AuthController {
 
     return userLogin;
   }
-
-  @UseGuards(AuthJWTGuard)
-  @Get('private')
-  async check(@Req() req: Request) {
-        return 'private working';
-  }
 }

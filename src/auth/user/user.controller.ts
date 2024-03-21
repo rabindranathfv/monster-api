@@ -4,14 +4,17 @@ import {
   Param,
   Delete,
   NotFoundException,
+  UseGuards,
 } from '@nestjs/common';
 
 import { UserService } from './user.service';
 import { ParseMongoIdPipe } from 'src/common/pipes/parse-mongo-id/parse-mongo-id.pipe';
 import { mapUserWithoutPsw } from '../helpers/user-map.helper';
-// import { ApiKeyAuthGuard } from '../guard/api-key-auth.guard';
+import { AuthJWTGuard } from '../guard/jwt-auth.guard';
+import { ApiKeyAuthGuard } from '../guard/api-key-auth.guard';
 
-// @UseGuards(ApiKeyAuthGuard)
+@UseGuards(ApiKeyAuthGuard)
+@UseGuards(AuthJWTGuard)
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}

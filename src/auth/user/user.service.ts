@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { User } from './entities/user.entity';
+import { User } from '../shema/user.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 
@@ -9,7 +9,7 @@ export class UserService {
     @InjectModel(User.name) private readonly userModel: Model<User>,
   ) {}
 
-  async findOne(id: string): Promise<User> {
+  async findOne(id: string): Promise<User | null> {
     try {
       return await this.userModel.findById(id);
     } catch (error) {

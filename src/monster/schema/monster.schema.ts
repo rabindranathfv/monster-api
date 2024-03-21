@@ -13,14 +13,12 @@ export class MonsterName extends Document {
   title: string;
 }
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, versionKey: false })
 export class Monster extends Document {
   @Prop({
-    // type: { first: String, last: String, title: String },
     type: MonsterName,
     required: true,
   })
-  // name: { first: string; last: string; title: string };
   name: MonsterName;
 
   @Prop({ required: true, enum: Gender })

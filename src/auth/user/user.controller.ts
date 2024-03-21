@@ -4,10 +4,15 @@ import {
   Param,
   Delete,
   NotFoundException,
+  UseGuards,
 } from '@nestjs/common';
+
 import { UserService } from './user.service';
 import { ParseMongoIdPipe } from 'src/common/pipes/parse-mongo-id/parse-mongo-id.pipe';
+import { mapUserWithoutPsw } from '../helpers/user-map.helper';
+import { ApiKeyAuthGuard } from '../guard/api-key-auth.guard';
 
+@UseGuards(ApiKeyAuthGuard)
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -20,7 +25,7 @@ export class UserController {
       throw new NotFoundException(`this user ${id} doesn't exist`);
     }
 
-    return user;
+    return mapUserWithoutPsw(user);
   }
 
   @Delete(':id')
@@ -31,6 +36,6 @@ export class UserController {
       throw new NotFoundException(`this user ${id} doesn't exist`);
     }
 
-    return user;
+    return { message: `userID :${id} is deleted` };
   }
 }

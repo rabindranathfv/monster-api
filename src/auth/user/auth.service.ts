@@ -11,11 +11,12 @@ import { Model } from 'mongoose';
 
 import { hashSync, compareSync, genSaltSync } from 'bcrypt';
 
-import { User } from 'src/auth/entities/user.entity';
-import { LoginUserDto } from './dto/login-user.dto';
-import { JwtPayload } from './interfaces/jwt-payload.interface';
+import { User } from 'src/auth/shema/user.schema';
+import { LoginUserDto } from '../dto/login-user.dto';
+import { JwtPayload } from '../interfaces/jwt-payload.interface';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto } from '../dto/create-user.dto';
+import { LoginFail } from '../types/user.types';
 
 @Injectable()
 export class AuthService {
@@ -40,17 +41,22 @@ export class AuthService {
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     try {
-      const userInstance = new this.userModel(createUserDto);
+      const { password, ...userData } = createUserDto;
+
+      const userInstance = new this.userModel({
+        ...userData,
+        password: hashSync(password, genSaltSync()),
+      });
       return await userInstance.save();
     } catch (error) {
       throw new HttpException(
-        'Internal Server Error',
+        error.message || 'Internal Server Error',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }
 
-  async login(loginUserDto: LoginUserDto) {
+  async login(loginUserDto: LoginUserDto): Promise<Partial<User> | LoginFail> {
     try {
       const { password, email } = loginUserDto;
 
@@ -60,13 +66,25 @@ export class AuthService {
         return user;
       }
 
-      if (!compareSync(password, user.password))
-        throw new UnauthorizedException('Credentials are not valid (password)');
+      if (!compareSync(password, user.password)) {
+        return { password: false };
+      }
 
-      return {
-        ...user,
-        token: await this.getJwtToken({ id: user._id }),
+      const token = await this.getJwtToken({
+        id: user._id,
+        fullName: user.fullName,
+        role: user.role,
+        email: user.email,
+      });
+
+      const v = {
+        id: user._id,
+        fullName: user.fullName,
+        role: user.role,
+        email: user.email,
+        token,
       };
+      return v;
     } catch (error) {
       throw new HttpException(
         'Internal Server Error',

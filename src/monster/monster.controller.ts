@@ -6,8 +6,6 @@ import {
   Param,
   Delete,
   Put,
-  HttpException,
-  HttpStatus,
   NotFoundException,
   UseGuards,
 } from '@nestjs/common';
@@ -19,7 +17,7 @@ import { UpdateMonsterDto } from './dto/update-monster.dto';
 import { ApiKeyAuthGuard } from 'src/auth/guard/api-key-auth.guard';
 
 import { ParseMongoIdPipe } from 'src/common/pipes/parse-mongo-id/parse-mongo-id.pipe';
-import { Monster } from './entities/monster.entity';
+import { Monster } from './schema/monster.schema';
 
 @UseGuards(ApiKeyAuthGuard)
 @Controller('monster')

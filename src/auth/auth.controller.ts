@@ -1,8 +1,15 @@
-import { Controller, Post, Body, UnauthorizedException } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
 
-import { AuthService } from './auth.service';
+import { AuthService } from './user/auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
+import { ApiKeyAuthGuard } from './guard/api-key-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -15,14 +22,20 @@ export class AuthController {
 
   @Post('login')
   async loginUser(@Body() loginUserDto: LoginUserDto) {
-    const login = await this.authService.login(loginUserDto);
+    const userLogin = await this.authService.login(loginUserDto);
 
-    if (!login) {
+    if (!userLogin) {
       throw new UnauthorizedException(
         'Credentials are not valid, please check your email',
       );
     }
 
-    return;
+    if (!userLogin.password) {
+      throw new UnauthorizedException(
+        'Credentials are not valid, please check your password',
+      );
+    }
+
+    return userLogin;
   }
 }

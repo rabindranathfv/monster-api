@@ -1,5 +1,11 @@
+import { User } from '../shema/user.schema';
+
 export enum Role {
-  ADMIN = 'admin',
-  USER = 'user',
-  PUBLIC = 'public',
+  ADMIN = 'ADMIN',
+  USER = 'USER',
+  PUBLIC = 'PUBLIC',
+}
+
+export interface LoginFail {
+  password: boolean;
 }

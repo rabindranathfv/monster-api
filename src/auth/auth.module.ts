@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { AuthService } from './user/auth.service';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ApiKeyStrategy } from './strategies/api-key.strategy';
-import { UserController } from './user.controller';
-import { UserService } from './user.service';
+import { UserController } from './user/user.controller';
+import { UserService } from './user/user.service';
 import { AuthController } from './auth.controller';
 import { JwtModule } from '@nestjs/jwt';
-import { User, UserSchema } from './entities/user.entity';
+import { User, UserSchema } from './shema/user.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
@@ -35,7 +35,7 @@ import { MongooseModule } from '@nestjs/mongoose';
     ]),
   ],
   controllers: [UserController, AuthController],
-  providers: [AuthService, ApiKeyStrategy, UserService],
+  providers: [AuthService, UserService, ApiKeyStrategy],
   exports: [AuthService, UserService],
 })
 export class AuthModule {}

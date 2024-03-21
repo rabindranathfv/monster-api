@@ -7,7 +7,8 @@ import {
   CacheModuleOptions,
 } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-redis-store';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
 import { MonsterModule } from './monster/monster.module';
 import { AppService } from './app.service';
@@ -17,6 +18,7 @@ import { CommonModule } from './common/common.module';
 
 import { loadConfig } from './config/env.config';
 import { validationSchema } from './config/env-schema.config';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -67,14 +69,38 @@ import { validationSchema } from './config/env-schema.config';
         return { uri: mongoConfig };
       },
     }),
+    ThrottlerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => {
+        const throttlerConfig = configService.get('REQUEST_RATE_LIMIT');
+        console.log(
+          '🚀 ~ file: app.module.ts:76 ~ useFactory: ~ throttlerConfig:',
+          throttlerConfig.ttl,
+          throttlerConfig.limit,
+        );
+
+        return [
+          {
+            ttl: throttlerConfig.ttl,
+            limit: throttlerConfig.limit,
+          },
+        ];
+      },
+    }),
     MonsterModule,
     CommonModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [
     {
       provide: APP_INTERCEPTOR,
       useClass: CacheInterceptor,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
     },
     AppService,
   ],

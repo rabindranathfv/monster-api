@@ -9,19 +9,24 @@ import {
   HttpException,
   HttpStatus,
   NotFoundException,
+  UseGuards,
 } from '@nestjs/common';
+import { SkipThrottle, Throttle } from '@nestjs/throttler';
 
 import { MonsterService } from './monster.service';
 import { CreateMonsterDto } from './dto/create-monster.dto';
 import { UpdateMonsterDto } from './dto/update-monster.dto';
+import { ApiKeyAuthGuard } from 'src/auth/guard/api-key-auth.guard';
+
 import { ParseMongoIdPipe } from 'src/common/pipes/parse-mongo-id/parse-mongo-id.pipe';
 import { Monster } from './entities/monster.entity';
-import { sleep } from 'src/common/utils/sleep';
 
+@UseGuards(ApiKeyAuthGuard)
 @Controller('monster')
 export class MonsterController {
   constructor(private readonly monsterService: MonsterService) {}
 
+  @SkipThrottle()
   @Post()
   async create(@Body() createMonsterDto: CreateMonsterDto) {
     return await this.monsterService.createMonster(createMonsterDto);
@@ -29,23 +34,11 @@ export class MonsterController {
 
   @Get()
   async findAll() {
-    try {
-      const monsters = await this.monsterService.findAll();
-      await sleep(4000);
-      return monsters;
-    } catch (error) {
-      console.log(
-        '🚀 ~ file: monster.controller.ts:51 ~ MonsterController ~ findAll ~ error:',
-        error,
-      );
-
-      throw new HttpException(
-        'Internal Server Error',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+    const monsters = await this.monsterService.findAll();
+    return monsters;
   }
 
+  @Throttle({ default: { limit: 3, ttl: 10 } })
   @Get(':id')
   async findOne(@Param('id', ParseMongoIdPipe) id: string) {
     const monster = await this.monsterService.findOne(id);
@@ -57,6 +50,7 @@ export class MonsterController {
     return monster;
   }
 
+  @SkipThrottle()
   @Put(':id')
   async update(
     @Param('id', ParseMongoIdPipe) id: string,
@@ -74,6 +68,7 @@ export class MonsterController {
     return monster;
   }
 
+  @SkipThrottle()
   @Delete(':id')
   async remove(@Param('id', ParseMongoIdPipe) id: string) {
     const deletedMonster = await this.monsterService.deleteMonster(id);
@@ -87,6 +82,7 @@ export class MonsterController {
     };
   }
 
+  @SkipThrottle()
   @Post(':id/add-gold')
   async addGold(
     @Param('id', ParseMongoIdPipe) id: string,
@@ -100,6 +96,7 @@ export class MonsterController {
     return monster;
   }
 
+  @SkipThrottle()
   @Post(':id/remove-gold')
   async removeGold(
     @Param('id', ParseMongoIdPipe) id: string,

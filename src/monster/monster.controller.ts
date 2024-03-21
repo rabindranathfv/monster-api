@@ -6,42 +6,46 @@ import {
   Param,
   Delete,
   Put,
-  HttpException,
-  HttpStatus,
   NotFoundException,
+  UseGuards,
+  Req,
+  SetMetadata,
 } from '@nestjs/common';
+import { SkipThrottle, Throttle } from '@nestjs/throttler';
+
 import { MonsterService } from './monster.service';
 import { CreateMonsterDto } from './dto/create-monster.dto';
 import { UpdateMonsterDto } from './dto/update-monster.dto';
-import { ParseMongoIdPipe } from 'src/common/pipes/parse-mongo-id/parse-mongo-id.pipe';
-import { Monster } from './entities/monster.entity';
+import { ApiKeyAuthGuard } from 'src/auth/guard/api-key-auth.guard';
 
+import { ParseMongoIdPipe } from 'src/common/pipes/parse-mongo-id/parse-mongo-id.pipe';
+import { Monster } from './schema/monster.schema';
+import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guard/roles.guard';
+import { RoleProtected } from 'src/auth/decorators/role-protected.decorator';
+import { Role } from 'src/auth/types/user.types';
+
+@UseGuards(ApiKeyAuthGuard, JwtAuthGuard, RolesGuard)
 @Controller('monster')
 export class MonsterController {
   constructor(private readonly monsterService: MonsterService) {}
 
+  @SkipThrottle()
+  @RoleProtected(Role.ADMIN, Role.USER)
   @Post()
   async create(@Body() createMonsterDto: CreateMonsterDto) {
     return await this.monsterService.createMonster(createMonsterDto);
   }
 
+  @RoleProtected(Role.PUBLIC, Role.ADMIN, Role.USER)
   @Get()
   async findAll() {
-    try {
-      return await this.monsterService.findAll();
-    } catch (error) {
-      console.log(
-        '🚀 ~ file: monster.controller.ts:51 ~ MonsterController ~ findAll ~ error:',
-        error,
-      );
-
-      throw new HttpException(
-        'Internal Server Error',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+    const monsters = await this.monsterService.findAll();
+    return monsters;
   }
 
+  @Throttle({ default: { limit: 3, ttl: 10 } })
+  @RoleProtected(Role.ADMIN, Role.USER)
   @Get(':id')
   async findOne(@Param('id', ParseMongoIdPipe) id: string) {
     const monster = await this.monsterService.findOne(id);
@@ -53,6 +57,8 @@ export class MonsterController {
     return monster;
   }
 
+  @SkipThrottle()
+  @RoleProtected(Role.ADMIN, Role.USER)
   @Put(':id')
   async update(
     @Param('id', ParseMongoIdPipe) id: string,
@@ -70,6 +76,8 @@ export class MonsterController {
     return monster;
   }
 
+  @SkipThrottle()
+  @RoleProtected(Role.ADMIN)
   @Delete(':id')
   async remove(@Param('id', ParseMongoIdPipe) id: string) {
     const deletedMonster = await this.monsterService.deleteMonster(id);
@@ -83,6 +91,8 @@ export class MonsterController {
     };
   }
 
+  @SkipThrottle()
+  @RoleProtected(Role.ADMIN)
   @Post(':id/add-gold')
   async addGold(
     @Param('id', ParseMongoIdPipe) id: string,
@@ -96,6 +106,8 @@ export class MonsterController {
     return monster;
   }
 
+  @SkipThrottle()
+  @RoleProtected(Role.ADMIN)
   @Post(':id/remove-gold')
   async removeGold(
     @Param('id', ParseMongoIdPipe) id: string,

@@ -10,6 +10,7 @@ import {
   UseGuards,
   Req,
   SetMetadata,
+  Query,
 } from '@nestjs/common';
 import { SkipThrottle, Throttle } from '@nestjs/throttler';
 
@@ -24,6 +25,9 @@ import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guard/roles.guard';
 import { RoleProtected } from 'src/auth/decorators/role-protected.decorator';
 import { Role } from 'src/auth/types/user.types';
+import { PaginationQueryParamsDto } from 'src/common/dto/pagination-query-params.dto';
+import { PaginatedDto } from 'src/common/dto/pagination.dto';
+import { ResponseMonsterDto } from './dto/response-monster.dto';
 
 @UseGuards(ApiKeyAuthGuard, JwtAuthGuard, RolesGuard)
 @Controller('monster')
@@ -39,9 +43,11 @@ export class MonsterController {
 
   @RoleProtected(Role.PUBLIC, Role.ADMIN, Role.USER)
   @Get()
-  async findAll() {
-    const monsters = await this.monsterService.findAll();
-    return monsters;
+  async findAll(
+    @Query() paginationQueryParams: PaginationQueryParamsDto,
+  ): Promise<PaginatedDto<ResponseMonsterDto>> {
+    const { page, limit } = paginationQueryParams;
+    return await this.monsterService.findAll(page, limit);
   }
 
   @Throttle({ default: { limit: 3, ttl: 10 } })

@@ -1,22 +1,27 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { CreateMonsterDto } from './dto/create-monster.dto';
-import { UpdateMonsterDto } from './dto/update-monster.dto';
-import { Monster } from './schema/monster.schema';
-import { PaginatedDto } from '../common/dto/pagination.dto';
-import { ResponseMonsterDto } from './dto/response-monster.dto';
-import { MonsterAdapterRepository } from './repository/monster-adapter.repository';
-import { MONSTER_REPOSITORY } from './repository/monster.repository';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+
+import { PaginatedDto } from 'src/common/dto/pagination.dto';
+import { MonsterRepository } from './monster.repository';
+
+import { Monster } from '../schema/monster.schema';
+import { CreateMonsterDto } from '../dto/create-monster.dto';
+import { ResponseMonsterDto } from '../dto/response-monster.dto';
+import { UpdateMonsterDto } from '../dto/update-monster.dto';
 
 @Injectable()
-export class MonsterService {
+export class MonsterAdapterRepository implements MonsterRepository {
   constructor(
-    @Inject(MONSTER_REPOSITORY)
-    private readonly monsterRepository: MonsterAdapterRepository,
+    @InjectModel(Monster.name) private readonly monsterModel: Model<Monster>,
   ) {}
 
   async createMonster(createMonsterDto: CreateMonsterDto): Promise<Monster> {
     try {
-      return await this.monsterRepository.createMonster(createMonsterDto);
+      const monsterInstance = new this.monsterModel(createMonsterDto);
+
+      const newMonster = await monsterInstance.save();
+      return newMonster;
     } catch (error) {
       throw new HttpException(
         'Internal Server Error',
@@ -30,7 +35,9 @@ export class MonsterService {
     limit: number,
   ): Promise<PaginatedDto<ResponseMonsterDto>> {
     try {
-      return await this.monsterRepository.findAll(page, limit);
+      const monsters = await this.monsterModel.find().limit(limit).skip((page -1)*limit).exec();
+      const monsterCount = await this.monsterModel.countDocuments().exec();
+      return new PaginatedDto(monsters, page, limit, monsterCount);
     } catch (error) {
       throw new HttpException(
         'Internal Server Error',
@@ -41,7 +48,7 @@ export class MonsterService {
 
   async findOne(id: string): Promise<Monster> {
     try {
-      return await this.monsterRepository.findOne(id);
+      return await this.monsterModel.findById(id);
     } catch (error) {
       throw new HttpException(
         'Internal Server Error',
@@ -49,13 +56,14 @@ export class MonsterService {
       );
     }
   }
-
   async updateMonster(
     id: string,
     updateMonsterDto: UpdateMonsterDto,
   ): Promise<Monster> {
     try {
-      return await this.monsterRepository.updateMonster(id, updateMonsterDto);
+      return await this.monsterModel.findByIdAndUpdate(id, updateMonsterDto, {
+        new: true,
+      });
     } catch (error) {
       throw new HttpException(
         'Internal Server Error',
@@ -66,7 +74,7 @@ export class MonsterService {
 
   async deleteMonster(id: string): Promise<Monster> {
     try {
-      return await this.monsterRepository.deleteMonster(id);
+      return await this.monsterModel.findByIdAndDelete(id);
     } catch (error) {
       throw new HttpException(
         'Internal Server Error',
@@ -77,7 +85,11 @@ export class MonsterService {
 
   async addGold(id: string, amount: number): Promise<Monster> {
     try {
-      return await this.monsterRepository.addGold(id, amount);
+      return await this.monsterModel.findByIdAndUpdate(
+        id,
+        { $inc: { goldBalance: amount } },
+        { new: true },
+      );
     } catch (error) {
       throw new HttpException(
         'Internal Server Error',
@@ -88,7 +100,11 @@ export class MonsterService {
 
   async removeGold(id: string, amount: number): Promise<Monster> {
     try {
-      return await this.monsterRepository.removeGold(id, amount);
+      return await this.monsterModel.findByIdAndUpdate(
+        id,
+        { $inc: { goldBalance: -amount } },
+        { new: true },
+      );
     } catch (error) {
       throw new HttpException(
         'Internal Server Error',

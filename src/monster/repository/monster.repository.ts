@@ -1,8 +1,8 @@
 import { PaginatedDto } from 'src/common/dto/pagination.dto';
 import { CreateMonsterDto } from '../dto/create-monster.dto';
 import { ResponseMonsterDto } from '../dto/response-monster.dto';
-import { Monster } from '../schema/monster.schema';
 import { UpdateMonsterDto } from '../dto/update-monster.dto';
+import { Monster } from '../schema/monster.schema';
 
 export const MONSTER_REPOSITORY = 'MonsterRepository';
 

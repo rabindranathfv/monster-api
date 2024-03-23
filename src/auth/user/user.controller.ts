@@ -6,6 +6,7 @@ import {
   NotFoundException,
   UseGuards,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
 import { UserService } from './user.service';
 import { ParseMongoIdPipe } from 'src/common/pipes/parse-mongo-id/parse-mongo-id.pipe';
@@ -16,6 +17,7 @@ import { RoleProtected } from '../decorators/role-protected.decorator';
 import { Role } from '../types/user.types';
 import { RolesGuard } from '../guard/roles.guard';
 
+@ApiTags('User')
 @UseGuards(ApiKeyAuthGuard, JwtAuthGuard, RolesGuard)
 @Controller('user')
 export class UserController {

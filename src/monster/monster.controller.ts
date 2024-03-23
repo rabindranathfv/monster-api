@@ -8,11 +8,10 @@ import {
   Put,
   NotFoundException,
   UseGuards,
-  Req,
-  SetMetadata,
   Query,
 } from '@nestjs/common';
 import { SkipThrottle, Throttle } from '@nestjs/throttler';
+import { ApiTags } from '@nestjs/swagger';
 
 import { MonsterService } from './monster.service';
 import { CreateMonsterDto } from './dto/create-monster.dto';
@@ -29,6 +28,7 @@ import { PaginationQueryParamsDto } from 'src/common/dto/pagination-query-params
 import { PaginatedDto } from 'src/common/dto/pagination.dto';
 import { ResponseMonsterDto } from './dto/response-monster.dto';
 
+@ApiTags('Products')
 @UseGuards(ApiKeyAuthGuard, JwtAuthGuard, RolesGuard)
 @Controller('monster')
 export class MonsterController {

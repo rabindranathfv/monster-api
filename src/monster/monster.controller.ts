@@ -9,9 +9,10 @@ import {
   NotFoundException,
   UseGuards,
   Query,
+  HttpStatus,
 } from '@nestjs/common';
 import { SkipThrottle, Throttle } from '@nestjs/throttler';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { MonsterService } from './monster.service';
 import { CreateMonsterDto } from './dto/create-monster.dto';
@@ -28,12 +29,34 @@ import { PaginationQueryParamsDto } from 'src/common/dto/pagination-query-params
 import { PaginatedDto } from 'src/common/dto/pagination.dto';
 import { ResponseMonsterDto } from './dto/response-monster.dto';
 
+@ApiBearerAuth()
 @ApiTags('Products')
 @UseGuards(ApiKeyAuthGuard, JwtAuthGuard, RolesGuard)
 @Controller('monster')
 export class MonsterController {
   constructor(private readonly monsterService: MonsterService) {}
 
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Monster was created succesfully',
+    type: Monster,
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'Internal Server Error',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Unauthorized, login related o APIKEY related',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Forbidden, Token related',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Some fields are missing',
+  })
   @SkipThrottle()
   @RoleProtected(Role.ADMIN, Role.USER)
   @Post()

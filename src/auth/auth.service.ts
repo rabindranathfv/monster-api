@@ -1,32 +1,32 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 
-import { hashSync, compareSync, genSaltSync } from 'bcrypt';
+import { compareSync } from 'bcrypt';
+
+import { AUTH_REPOSITORY } from './repository/auth.repository';
+import { AuthAdapterRepository } from './repository/auth-adapter.repository';
+import { USER_REPOSITORY } from './user/repository/user.repository';
+import { UserAdapterRepository } from './user/repository/user-adapter.repository';
 
 import { User } from 'src/auth/shema/user.schema';
-import { LoginUserDto } from '../dto/login-user.dto';
-import { JwtPayload } from '../interfaces/jwt-payload.interface';
-import { UserService } from './user.service';
-import { CreateUserDto } from '../dto/create-user.dto';
-import { LoginFail } from '../types/user.types';
-import { mapUserAuth } from '../helpers/use-auth-map.helper';
+import { LoginFail } from './types/user.types';
+import { JwtPayload } from './interfaces/jwt-payload.interface';
+import { LoginUserDto } from './dto/login-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
+
+import { mapUserAuth } from './helpers/use-auth-map.helper';
 
 @Injectable()
 export class AuthService {
   private readonly apiKeyService;
   constructor(
     private readonly configServ: ConfigService,
-    @InjectModel(User.name) private readonly userModel: Model<User>,
+    @Inject(AUTH_REPOSITORY)
+    private readonly authRepository: AuthAdapterRepository,
+    @Inject(USER_REPOSITORY)
+    private readonly userRepository: UserAdapterRepository,
     private readonly jwtService: JwtService,
-    private readonly userService: UserService,
   ) {
     this.apiKeyService = this.configServ.get('API_KEY');
   }
@@ -42,13 +42,7 @@ export class AuthService {
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     try {
-      const { password, ...userData } = createUserDto;
-
-      const userInstance = new this.userModel({
-        ...userData,
-        password: hashSync(password, genSaltSync()),
-      });
-      return await userInstance.save();
+      return await this.authRepository.create(createUserDto);
     } catch (error) {
       throw new HttpException(
         error.message || 'Internal Server Error',
@@ -60,8 +54,7 @@ export class AuthService {
   async login(loginUserDto: LoginUserDto): Promise<Partial<User> | LoginFail> {
     try {
       const { password, email } = loginUserDto;
-
-      const user = await this.userService.findByEmail(email);
+      const user = await this.userRepository.findByEmail(email);
 
       if (!user) {
         return user;
@@ -86,5 +79,4 @@ export class AuthService {
       );
     }
   }
-
 }

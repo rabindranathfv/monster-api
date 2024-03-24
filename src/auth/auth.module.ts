@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { AuthService } from './user/auth.service';
+import { AuthService } from './auth.service';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ApiKeyStrategy } from './strategies/api-key.strategy';
@@ -12,6 +12,10 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
 import { RolesGuard } from './guard/roles.guard';
+import { USER_REPOSITORY } from './user/repository/user.repository';
+import { UserAdapterRepository } from './user/repository/user-adapter.repository';
+import { AUTH_REPOSITORY } from './repository/auth.repository';
+import { AuthAdapterRepository } from './repository/auth-adapter.repository';
 
 @Module({
   imports: [
@@ -45,6 +49,14 @@ import { RolesGuard } from './guard/roles.guard';
     JwtStrategy,
     JwtAuthGuard,
     RolesGuard,
+    {
+      provide: AUTH_REPOSITORY,
+      useClass: AuthAdapterRepository,
+    },
+    {
+      provide: USER_REPOSITORY,
+      useClass: UserAdapterRepository,
+    },
   ],
   exports: [
     AuthService,
@@ -54,6 +66,14 @@ import { RolesGuard } from './guard/roles.guard';
     JwtModule,
     JwtAuthGuard,
     RolesGuard,
+    {
+      provide: AUTH_REPOSITORY,
+      useClass: AuthAdapterRepository,
+    },
+    {
+      provide: USER_REPOSITORY,
+      useClass: UserAdapterRepository,
+    },
   ],
 })
 export class AuthModule {}

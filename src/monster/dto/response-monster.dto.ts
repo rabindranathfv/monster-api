@@ -1,42 +1,38 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Gender, Nationality } from '../types/monster.type';
-import { Document } from 'mongoose';
 
-export class MonsterName extends Document {
+export class ResponseMonsterNameDto {
   @ApiProperty({
     example: 'Drogon',
     description: 'Monster name',
     required: true,
   })
-  @Prop({ required: true })
-  first: string;
-
+  readonly first: string;
   @ApiProperty({
     example: 'Fire',
     description: 'Monster lastname',
     required: true,
   })
-  @Prop({ required: true })
-  last: string;
+  readonly last: string;
 
   @ApiProperty({
     example: 'Mr.',
     description: 'Monster title',
     required: true,
   })
-  @Prop({ required: true })
-  title: string;
+  readonly title: string;
 }
 
-@Schema({ timestamps: true, versionKey: false })
-export class Monster extends Document {
-  @ApiProperty()
-  @Prop({
-    type: MonsterName,
-    required: true,
+export class ResponseMonsterDto {
+  @ApiProperty({
+    example: '65fc52ffbb606a0b8750f482',
+    description: 'userId',
+    uniqueItems: true,
   })
-  name: MonsterName;
+  readonly _id: string;
+
+  @ApiProperty()
+  readonly name: ResponseMonsterNameDto;
 
   @ApiProperty({
     example: 'male',
@@ -44,16 +40,14 @@ export class Monster extends Document {
     enum: Gender,
     required: true,
   })
-  @Prop({ required: true, enum: Gender })
-  gender: Gender;
+  readonly gender: string;
 
   @ApiProperty({
     example: 'this a powerfull dragon who can destroy everything',
     description: 'Monster description',
     required: true,
   })
-  @Prop({ required: true })
-  description: string;
+  readonly description: string;
 
   @ApiProperty({
     example: ['US', 'DE'],
@@ -62,16 +56,14 @@ export class Monster extends Document {
     required: true,
     isArray: true,
   })
-  @Prop({ type: [{ type: String, enum: Nationality }], required: true })
-  nationality: Nationality[];
+  readonly nationality: string[];
 
   @ApiProperty({
     example: 'https://example.com/dragon-image.jpg',
     description: 'Monster image',
     required: true,
   })
-  @Prop({ required: true })
-  image: string;
+  readonly image: string;
 
   @ApiProperty({
     example: 200,
@@ -79,8 +71,7 @@ export class Monster extends Document {
     required: false,
     default: 0,
   })
-  @Prop({ default: 0 })
-  goldBalance: number;
+  readonly goldBalance?: number;
 
   @ApiProperty({
     example: 10.2,
@@ -88,8 +79,7 @@ export class Monster extends Document {
     required: false,
     default: 0,
   })
-  @Prop({ default: 0 })
-  speed: number;
+  readonly speed?: number;
 
   @ApiProperty({
     example: 1000,
@@ -97,8 +87,7 @@ export class Monster extends Document {
     required: false,
     default: 0,
   })
-  @Prop({ default: 0 })
-  health: number;
+  readonly health?: number;
 
   @ApiProperty({
     example:
@@ -106,16 +95,12 @@ export class Monster extends Document {
     description: 'Monster secretNotes',
     required: true,
   })
-  @Prop()
-  secretNotes: string;
+  readonly secretNotes?: string;
 
   @ApiProperty({
     example: 'songoftheDragons',
     description: 'Monster password',
     required: true,
   })
-  @Prop({ required: true })
-  monsterPassword: string;
+  readonly monsterPassword: string;
 }
-
-export const MonsterSchema = SchemaFactory.createForClass(Monster);

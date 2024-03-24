@@ -10,7 +10,6 @@ import {
   UseGuards,
   Query,
   HttpStatus,
-  HttpException,
 } from '@nestjs/common';
 import { SkipThrottle, Throttle } from '@nestjs/throttler';
 import {
@@ -38,12 +37,14 @@ import { Role } from 'src/auth/types/user.types';
 import { PaginationQueryParamsDto } from 'src/common/dto/pagination-query-params.dto';
 import { PaginatedDto } from 'src/common/dto/pagination.dto';
 import { ResponseMonsterDto } from './dto/response-monster.dto';
+import { AddOrRemoveGoldMonsterDto } from './dto/add-or-remove-gold-monster.dto';
 
 @ApiBearerAuth()
 @ApiHeader({
   name: 'x-api-key',
   description: 'consume for endpoint type',
   required: true,
+  example: 'BoredMike',
 })
 @ApiTags('Monster')
 @UseGuards(ApiKeyAuthGuard, JwtAuthGuard, RolesGuard)
@@ -198,7 +199,11 @@ export class MonsterController {
     };
   }
 
-  // TODO: Agregar res OK
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Monster goldBalance should be higher',
+    type: Monster,
+  })
   @ApiInternalServerErrorResponse({
     description: 'Internal Server Error',
   })
@@ -216,9 +221,17 @@ export class MonsterController {
   @Post(':id/add-gold')
   async addGold(
     @Param('id', ParseMongoIdPipe) id: string,
-    @Body('amount') amount: number,
+    @Body() addOrRemoveGoldMonsterDto: AddOrRemoveGoldMonsterDto,
   ): Promise<Monster> {
-    const monster = await this.monsterService.addGold(id, amount);
+    console.log(
+      '🚀 ~ file: monster.controller.ts:223 ~ MonsterController ~ amount:',
+      addOrRemoveGoldMonsterDto,
+    );
+
+    const monster = await this.monsterService.addGold(
+      id,
+      addOrRemoveGoldMonsterDto,
+    );
 
     if (!monster) {
       throw new NotFoundException(`this monster ${id} doesn't exist`);
@@ -226,7 +239,11 @@ export class MonsterController {
     return monster;
   }
 
-  // TODO: Agregar resp OK
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Monster goldBalance should be less',
+    type: Monster,
+  })
   @ApiInternalServerErrorResponse({
     description: 'Internal Server Error',
   })
@@ -244,9 +261,12 @@ export class MonsterController {
   @Post(':id/remove-gold')
   async removeGold(
     @Param('id', ParseMongoIdPipe) id: string,
-    @Body('amount') amount: number,
+    @Body() addOrRemoveGoldMonsterDto: AddOrRemoveGoldMonsterDto,
   ): Promise<Monster> {
-    const monster = await this.monsterService.removeGold(id, amount);
+    const monster = await this.monsterService.removeGold(
+      id,
+      addOrRemoveGoldMonsterDto,
+    );
 
     if (!monster) {
       throw new NotFoundException(`this monster ${id} doesn't exist`);

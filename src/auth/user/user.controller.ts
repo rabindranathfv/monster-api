@@ -33,6 +33,7 @@ import { User } from '../shema/user.schema';
   name: 'x-api-key',
   description: 'consume for endpoint type',
   required: true,
+  example: 'PUBLIC',
 })
 @ApiTags('User')
 @UseGuards(ApiKeyAuthGuard, JwtAuthGuard, RolesGuard)

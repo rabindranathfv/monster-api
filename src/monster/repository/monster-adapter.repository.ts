@@ -9,6 +9,7 @@ import { Monster } from '../schema/monster.schema';
 import { CreateMonsterDto } from '../dto/create-monster.dto';
 import { ResponseMonsterDto } from '../dto/response-monster.dto';
 import { UpdateMonsterDto } from '../dto/update-monster.dto';
+import { AddOrRemoveGoldMonsterDto } from '../dto/add-or-remove-gold-monster.dto';
 
 @Injectable()
 export class MonsterAdapterRepository implements MonsterRepository {
@@ -35,7 +36,11 @@ export class MonsterAdapterRepository implements MonsterRepository {
     limit: number,
   ): Promise<PaginatedDto<ResponseMonsterDto>> {
     try {
-      const monsters = await this.monsterModel.find().limit(limit).skip((page -1)*limit).exec();
+      const monsters = await this.monsterModel
+        .find()
+        .limit(limit)
+        .skip((page - 1) * limit)
+        .exec();
       const monsterCount = await this.monsterModel.countDocuments().exec();
       return new PaginatedDto(monsters, page, limit, monsterCount);
     } catch (error) {
@@ -83,8 +88,12 @@ export class MonsterAdapterRepository implements MonsterRepository {
     }
   }
 
-  async addGold(id: string, amount: number): Promise<Monster> {
+  async addGold(
+    id: string,
+    addOrRemoveGoldMonsterDto: AddOrRemoveGoldMonsterDto,
+  ): Promise<Monster> {
     try {
+      const { amount } = addOrRemoveGoldMonsterDto;
       return await this.monsterModel.findByIdAndUpdate(
         id,
         { $inc: { goldBalance: amount } },
@@ -98,8 +107,12 @@ export class MonsterAdapterRepository implements MonsterRepository {
     }
   }
 
-  async removeGold(id: string, amount: number): Promise<Monster> {
+  async removeGold(
+    id: string,
+    addOrRemoveGoldMonsterDtomount: AddOrRemoveGoldMonsterDto,
+  ): Promise<Monster> {
     try {
+      const { amount } = addOrRemoveGoldMonsterDtomount;
       return await this.monsterModel.findByIdAndUpdate(
         id,
         { $inc: { goldBalance: -amount } },

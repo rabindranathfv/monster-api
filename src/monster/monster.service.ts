@@ -6,6 +6,7 @@ import { PaginatedDto } from '../common/dto/pagination.dto';
 import { ResponseMonsterDto } from './dto/response-monster.dto';
 import { MonsterAdapterRepository } from './repository/monster-adapter.repository';
 import { MONSTER_REPOSITORY } from './repository/monster.repository';
+import { AddOrRemoveGoldMonsterDto } from './dto/add-or-remove-gold-monster.dto';
 
 @Injectable()
 export class MonsterService {
@@ -75,9 +76,15 @@ export class MonsterService {
     }
   }
 
-  async addGold(id: string, amount: number): Promise<Monster> {
+  async addGold(
+    id: string,
+    addOrRemoveGoldMonsterDto: AddOrRemoveGoldMonsterDto,
+  ): Promise<Monster> {
     try {
-      return await this.monsterRepository.addGold(id, amount);
+      return await this.monsterRepository.addGold(
+        id,
+        addOrRemoveGoldMonsterDto,
+      );
     } catch (error) {
       throw new HttpException(
         'Internal Server Error',
@@ -86,9 +93,15 @@ export class MonsterService {
     }
   }
 
-  async removeGold(id: string, amount: number): Promise<Monster> {
+  async removeGold(
+    id: string,
+    addOrRemoveGoldMonsterDto: AddOrRemoveGoldMonsterDto,
+  ): Promise<Monster> {
     try {
-      return await this.monsterRepository.removeGold(id, amount);
+      return await this.monsterRepository.removeGold(
+        id,
+        addOrRemoveGoldMonsterDto,
+      );
     } catch (error) {
       throw new HttpException(
         'Internal Server Error',

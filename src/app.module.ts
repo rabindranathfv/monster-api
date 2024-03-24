@@ -48,6 +48,8 @@ import { AuthModule } from './auth/auth.module';
           host: redisConfig.host,
           port: redisConfig.port,
           ttl: cacheConfig.ttl,
+          password: redisConfig.password,
+          user: redisConfig.user,
         };
       },
     }),
@@ -58,15 +60,17 @@ import { AuthModule } from './auth/auth.module';
         /* istanbul ignore next */
         const node_env = configService.get('NODE_ENV');
         const dbHost = configService.get('DB_HOST');
+        const dbName = configService.get('DB_NAME');
         const mongoConfig = configService.get('MONGO_URL');
         console.log(
           '🚀 ~ file: app.module.ts:24 ~ mongoConfig:',
           node_env,
           dbHost,
+          dbName,
           mongoConfig,
         );
         /* istanbul ignore next */
-        return { uri: mongoConfig };
+        return { uri: mongoConfig, dbName: dbName };
       },
     }),
     ThrottlerModule.forRootAsync({

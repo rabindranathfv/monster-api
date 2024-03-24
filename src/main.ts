@@ -33,7 +33,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api/v1/docs', app, document);
 
   const PORT = configServ.get<number>('PORT');
   console.log('🚀 ~ file: main.ts:22 ~ bootstrap ~ PORT:', PORT);

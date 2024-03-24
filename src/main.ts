@@ -40,6 +40,6 @@ async function bootstrap() {
   const NODE_ENV = configServ.get<string>('NODE_ENV');
   console.log('🚀 ~ file: main.ts:24 ~ bootstrap ~ NODE_ENV:', NODE_ENV);
 
-  await app.listen(3000);
+  await app.listen(PORT);
 }
 bootstrap();

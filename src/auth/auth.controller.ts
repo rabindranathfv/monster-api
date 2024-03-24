@@ -1,16 +1,20 @@
 import { Controller, Post, Body, UnauthorizedException } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
+import { User } from './shema/user.schema';
 
-@ApiBearerAuth()
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @ApiCreatedResponse({
+    description: 'user register',
+    type: User,
+  })
   @Post('register')
   async createUser(@Body() createUserDto: CreateUserDto) {
     return this.authService.create(createUserDto);

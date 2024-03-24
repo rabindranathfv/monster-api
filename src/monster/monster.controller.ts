@@ -10,9 +10,19 @@ import {
   UseGuards,
   Query,
   HttpStatus,
+  HttpException,
 } from '@nestjs/common';
 import { SkipThrottle, Throttle } from '@nestjs/throttler';
-import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiForbiddenResponse,
+  ApiHeader,
+  ApiInternalServerErrorResponse,
+  ApiResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 
 import { MonsterService } from './monster.service';
 import { CreateMonsterDto } from './dto/create-monster.dto';
@@ -30,7 +40,12 @@ import { PaginatedDto } from 'src/common/dto/pagination.dto';
 import { ResponseMonsterDto } from './dto/response-monster.dto';
 
 @ApiBearerAuth()
-@ApiTags('Products')
+@ApiHeader({
+  name: 'x-api-key',
+  description: 'consume for endpoint type',
+  required: true,
+})
+@ApiTags('Monster')
 @UseGuards(ApiKeyAuthGuard, JwtAuthGuard, RolesGuard)
 @Controller('monster')
 export class MonsterController {
@@ -41,20 +56,16 @@ export class MonsterController {
     description: 'Monster was created succesfully',
     type: Monster,
   })
-  @ApiResponse({
-    status: HttpStatus.INTERNAL_SERVER_ERROR,
+  @ApiInternalServerErrorResponse({
     description: 'Internal Server Error',
   })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
+  @ApiUnauthorizedResponse({
     description: 'Unauthorized, login related o APIKEY related',
   })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
+  @ApiForbiddenResponse({
     description: 'Forbidden, Token related',
   })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
+  @ApiBadRequestResponse({
     description: 'Some fields are missing',
   })
   @SkipThrottle()
@@ -64,6 +75,23 @@ export class MonsterController {
     return await this.monsterService.createMonster(createMonsterDto);
   }
 
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Monster list',
+    type: [PaginatedDto<ResponseMonsterDto>],
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal Server Error',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized, login related o APIKEY related',
+  })
+  @ApiForbiddenResponse({
+    description: 'Forbidden, Token related',
+  })
+  @ApiBadRequestResponse({
+    description: 'Some fields are missing',
+  })
   @RoleProtected(Role.PUBLIC, Role.ADMIN, Role.USER)
   @Get()
   async findAll(
@@ -73,6 +101,23 @@ export class MonsterController {
     return await this.monsterService.findAll(page, limit);
   }
 
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Monster list',
+    type: [Monster],
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal Server Error',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized, login related o APIKEY related',
+  })
+  @ApiForbiddenResponse({
+    description: 'Forbidden, Token related',
+  })
+  @ApiBadRequestResponse({
+    description: 'Some fields are missing or this id is not a valid mongoId',
+  })
   @Throttle({ default: { limit: 3, ttl: 10 } })
   @RoleProtected(Role.ADMIN, Role.USER)
   @Get(':id')
@@ -86,6 +131,23 @@ export class MonsterController {
     return monster;
   }
 
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Monster list',
+    type: [Monster],
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal Server Error',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized, login related o APIKEY related',
+  })
+  @ApiForbiddenResponse({
+    description: 'Forbidden, Token related',
+  })
+  @ApiBadRequestResponse({
+    description: 'Some fields are missing or this id is not a valid mongoId',
+  })
   @SkipThrottle()
   @RoleProtected(Role.ADMIN, Role.USER)
   @Put(':id')
@@ -105,6 +167,22 @@ export class MonsterController {
     return monster;
   }
 
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Monster delete by Id',
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal Server Error',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized, login related o APIKEY related',
+  })
+  @ApiForbiddenResponse({
+    description: 'Forbidden, Token related',
+  })
+  @ApiBadRequestResponse({
+    description: 'Some fields are missing or this id is not a valid mongoId',
+  })
   @SkipThrottle()
   @RoleProtected(Role.ADMIN)
   @Delete(':id')
@@ -120,6 +198,19 @@ export class MonsterController {
     };
   }
 
+  // TODO: Agregar res OK
+  @ApiInternalServerErrorResponse({
+    description: 'Internal Server Error',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized, login related o APIKEY related',
+  })
+  @ApiForbiddenResponse({
+    description: 'Forbidden, Token related',
+  })
+  @ApiBadRequestResponse({
+    description: 'Some fields are missing or this id is not a valid mongoId',
+  })
   @SkipThrottle()
   @RoleProtected(Role.ADMIN)
   @Post(':id/add-gold')
@@ -135,6 +226,19 @@ export class MonsterController {
     return monster;
   }
 
+  // TODO: Agregar resp OK
+  @ApiInternalServerErrorResponse({
+    description: 'Internal Server Error',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized, login related o APIKEY related',
+  })
+  @ApiForbiddenResponse({
+    description: 'Forbidden, Token related',
+  })
+  @ApiBadRequestResponse({
+    description: 'Some fields are missing or this id is not a valid mongoId',
+  })
   @SkipThrottle()
   @RoleProtected(Role.ADMIN)
   @Post(':id/remove-gold')

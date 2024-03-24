@@ -223,11 +223,6 @@ export class MonsterController {
     @Param('id', ParseMongoIdPipe) id: string,
     @Body() addOrRemoveGoldMonsterDto: AddOrRemoveGoldMonsterDto,
   ): Promise<Monster> {
-    console.log(
-      '🚀 ~ file: monster.controller.ts:223 ~ MonsterController ~ amount:',
-      addOrRemoveGoldMonsterDto,
-    );
-
     const monster = await this.monsterService.addGold(
       id,
       addOrRemoveGoldMonsterDto,

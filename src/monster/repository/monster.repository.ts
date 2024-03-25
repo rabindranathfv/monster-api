@@ -27,4 +27,5 @@ export interface MonsterRepository {
     id: string,
     addOrRemoveGoldMonsterDto: AddOrRemoveGoldMonsterDto,
   ): Promise<Monster>;
+  populateDBWithMonster(): Promise<any[]>;
 }

@@ -1,0 +1,146 @@
+[
+  {
+    "name": {
+      "first": "Warded",
+      "last": "Ice",
+      "title": "Mr."
+    },
+    "gender": "female",
+    "description": "A fiend that spits fire",
+    "nationality": ["US"],
+    "image": "https://example.com/dragon-image.jpg",
+    "goldBalance": 700,
+    "speed": 10.3,
+    "health": 205,
+    "secretNotes": "It was in the 3D Art office, under the desk",
+    "monsterPassword": "songoffireandcode"
+  },
+  {
+    "name": {
+      "first": "Grognar",
+      "last": "Stonejaw",
+      "title": "Lord"
+    },
+    "gender": "male",
+    "description": "A behemoth with stone-like skin",
+    "nationality": ["DE"],
+    "image": "https://example.com/stone-behemoth-image.jpg",
+    "goldBalance": 1200,
+    "speed": 6.8,
+    "health": 350,
+    "secretNotes": "Found lurking in the mountain caves",
+    "monsterPassword": "rockhidebeast"
+  },
+  {
+    "name": {
+      "first": "Sylvia",
+      "last": "Shadowclaw",
+      "title": "Lady"
+    },
+    "gender": "female",
+    "description": "A mysterious creature with razor-sharp claws",
+    "nationality": ["SP"],
+    "image": "https://example.com/shadow-creature-image.jpg",
+    "goldBalance": 950,
+    "speed": 14.5,
+    "health": 180,
+    "secretNotes": "Spotted haunting the forests at night",
+    "monsterPassword": "nightstalkersylvia"
+  },
+  {
+    "name": {
+      "first": "Gruk",
+      "last": "Moltenheart",
+      "title": "Master"
+    },
+    "gender": "male",
+    "description": "An elemental being made of molten lava",
+    "nationality": ["US"],
+    "image": "https://example.com/molten-being-image.jpg",
+    "goldBalance": 850,
+    "speed": 8.2,
+    "health": 280,
+    "secretNotes": "Guardian of the fiery caverns",
+    "monsterPassword": "flameguardian"
+  },
+  {
+    "name": {
+      "first": "Zephyr",
+      "last": "Stormwing",
+      "title": "Queen"
+    },
+    "gender": "female",
+    "description": "A majestic creature with wings of lightning",
+    "nationality": ["DE"],
+    "image": "https://example.com/lightning-queen-image.jpg",
+    "goldBalance": 1100,
+    "speed": 12.7,
+    "health": 220,
+    "secretNotes": "Spotted soaring through the storm clouds",
+    "monsterPassword": "thunderqueen"
+  },
+  {
+    "name": {
+      "first": "Argon",
+      "last": "Nightshade",
+      "title": "Sir"
+    },
+    "gender": "male",
+    "description": "A shadowy figure with eyes that pierce the darkness",
+    "nationality": ["SP"],
+    "image": "https://example.com/dark-knight-image.jpg",
+    "goldBalance": 1000,
+    "speed": 9.5,
+    "health": 250,
+    "secretNotes": "Known to vanish into thin air",
+    "monsterPassword": "shadowbladeargon"
+  },
+  {
+    "name": {
+      "first": "Draxia",
+      "last": "Frostbite",
+      "title": "Duchess"
+    },
+    "gender": "female",
+    "description": "An icy creature that freezes its prey",
+    "nationality": ["US"],
+    "image": "https://example.com/ice-queen-image.jpg",
+    "goldBalance": 800,
+    "speed": 11.9,
+    "health": 240,
+    "secretNotes": "Spotted roaming the frozen tundra",
+    "monsterPassword": "frostqueen"
+  },
+  {
+    "name": {
+      "first": "Xalzar",
+      "last": "Voidreaper",
+      "title": "Baron"
+    },
+    "gender": "male",
+    "description": "A creature from the depths of the void",
+    "nationality": ["DE"],
+    "image": "https://example.com/void-being-image.jpg",
+    "goldBalance": 1250,
+    "speed": 7.3,
+    "health": 320,
+    "secretNotes": "Manifests from the darkest nightmares",
+    "monsterPassword": "abyssalreaper"
+  },
+  {
+    "name": {
+      "first": "Lysandra",
+      "last": "Sunflare",
+      "title": "Countess"
+    },
+    "gender": "female",
+    "description": "A radiant creature with flames for wings",
+    "nationality": ["SP"],
+    "image": "https://example.com/sunfire-angel-image.jpg",
+    "goldBalance": 900,
+    "speed": 13.2,
+    "health": 200,
+    "secretNotes": "Seen bathing in the sunlight",
+    "monsterPassword": "solarflarelysandra"
+  }
+]

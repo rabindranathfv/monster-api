@@ -269,4 +269,15 @@ export class MonsterController {
 
     return monster;
   }
+
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Seeder for create severals monsters',
+    type: [Monster],
+  })
+  @RoleProtected(Role.PUBLIC, Role.ADMIN, Role.USER)
+  @Get('populate/data')
+  async populateDBWithMonster() {
+    return await this.monsterService.populateDBWithMonster();
+  }
 }

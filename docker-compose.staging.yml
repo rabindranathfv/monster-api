@@ -1,0 +1,33 @@
+version: '3.9'
+
+services:
+  mongo_db:
+    image: mongo:5
+    container_name: mongo_db_monster_staging
+    ports:
+      - 27017:27017
+    environment:
+      - MONGODB_DATABASE=monster-db-staging
+    volumes:
+      - mongomonsterstaging:/data/configdb
+      - mongomonsterstaging:/data/db
+
+  redis:
+    image: redis:7
+    restart: unless-stopped
+    ports:
+      - 6379:6379
+    volumes:
+      - redis:/data
+    networks:
+      - nestjs-network
+
+networks:
+  nestjs-network:
+    name: nestjs-network
+    driver: bridge
+
+volumes:
+  mongomonsterstaging: {}
+  redis:
+    driver: local

@@ -1,0 +1,65 @@
+version: '3.9'
+
+services:
+  monsterapi:
+    container_name: monster_api_prod
+    build:
+      context: .
+      dockerfile: ./build/prod/Dockerfile
+    image: monsterapi-docker
+    command: npm run start:prod
+    restart: unless-stopped
+    ports:
+      - '${PORT}:${PORT}'
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - PORT=${PORT}
+      - DB_HOST=${DB_HOST}
+      - DB_NAME=${DB_NAME}
+      - DB_PORT=${DB_PORT}
+      - MONGO_URL=${MONGO_URL}
+      - TTL_CACHE=${TTL_CACHE}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REQUEST_TTL=${REQUEST_TTL}
+      - REQUEST_LIMIT=${REQUEST_LIMIT}
+      - API_KEY=${API_KEY}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_IN=${JWT_EXPIRES_IN}
+    depends_on:
+      - mongo_db
+      - redis_db
+    networks:
+      - nestjs-network-prod
+
+  mongo_db_prod:
+    image: mongo:5
+    container_name: mongo_db_monster_prod
+    ports:
+      - 27017:27017
+    environment:
+      - MONGODB_DATABASE=monster-db
+    volumes:
+      - mongomonsterprod:/data/configdb
+      - mongomonsterprod:/data/db
+    networks:
+      - nestjs-network-prod
+
+  redis_db_prod:
+    image: redis:7
+    restart: unless-stopped
+    ports:
+      - 6379:6379
+    volumes:
+      - redis:/data
+    networks:
+      - nestjs-network-prod
+
+networks:
+  nestjs-network-prod:
+    name: nestjs-network-prod
+    driver: bridge
+
+volumes:
+  mongomonsterprod: {}
+  redis: {}

@@ -1,0 +1,69 @@
+version: '3.9'
+
+services:
+  mongo_db:
+    image: mongo:5
+    container_name: mongo_db_monster
+    ports:
+      - 27017:27017
+    environment:
+      - MONGODB_DATABASE=monster-db
+    volumes:
+      - mongomonster:/data/configdb
+      - mongomonster:/data/db
+    networks:
+      - nestjs-network
+
+  redis_db:
+    container_name: redis_db_monster
+    image: redis:7
+    restart: unless-stopped
+    ports:
+      - 6379:6379
+    volumes:
+      - redis:/data
+    networks:
+      - nestjs-network
+
+  monsterapi:
+    container_name: monster_api_dev
+    build:
+      context: .
+      dockerfile: ./build/development/Dockerfile
+    image: monsterapi-docker
+    command: npm run start:dev
+    restart: unless-stopped
+    ports:
+      - '${PORT}:${PORT}'
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - PORT=${PORT}
+      - DB_HOST=${DB_HOST}
+      - DB_NAME=${DB_NAME}
+      - DB_PORT=${DB_PORT}
+      - MONGO_URL=${MONGO_URL}
+      - TTL_CACHE=${TTL_CACHE}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REQUEST_TTL=${REQUEST_TTL}
+      - REQUEST_LIMIT=${REQUEST_LIMIT}
+      - API_KEY=${API_KEY}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_IN=${JWT_EXPIRES_IN}
+    depends_on:
+      - mongo_db
+      - redis_db
+    networks:
+      - nestjs-network
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+
+networks:
+  nestjs-network:
+    name: nestjs-network
+    driver: bridge
+
+volumes:
+  mongomonster: {}
+  redis: {}

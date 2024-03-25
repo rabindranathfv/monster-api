@@ -11,11 +11,25 @@ import { ResponseMonsterDto } from '../dto/response-monster.dto';
 import { UpdateMonsterDto } from '../dto/update-monster.dto';
 import { AddOrRemoveGoldMonsterDto } from '../dto/add-or-remove-gold-monster.dto';
 
+import monsterSeed from '../data/monster.json';
+
 @Injectable()
 export class MonsterAdapterRepository implements MonsterRepository {
   constructor(
     @InjectModel(Monster.name) private readonly monsterModel: Model<Monster>,
   ) {}
+  async populateDBWithMonster(): Promise<any[]> {
+    try {
+      const monsterInserted = await this.monsterModel.insertMany(monsterSeed);
+
+      return monsterInserted;
+    } catch (error) {
+      throw new HttpException(
+        'Internal Server Error - trying SEED MONSTERS',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 
   async createMonster(createMonsterDto: CreateMonsterDto): Promise<Monster> {
     try {
@@ -61,6 +75,7 @@ export class MonsterAdapterRepository implements MonsterRepository {
       );
     }
   }
+
   async updateMonster(
     id: string,
     updateMonsterDto: UpdateMonsterDto,

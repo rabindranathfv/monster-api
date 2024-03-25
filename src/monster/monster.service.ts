@@ -109,4 +109,15 @@ export class MonsterService {
       );
     }
   }
+
+  async populateDBWithMonster() {
+    try {
+      return await this.monsterRepository.populateDBWithMonster();
+    } catch (error) {
+      throw new HttpException(
+        'Internal Server Error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 }

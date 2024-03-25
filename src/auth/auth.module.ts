@@ -26,7 +26,6 @@ import { AuthAdapterRepository } from './repository/auth-adapter.repository';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
         const jwtConfig = config.get('JWT');
-        console.log('🚀 ~ file: auth.module.ts:20 ~ jwtConfig:', jwtConfig);
 
         return {
           secret: jwtConfig.secret,

@@ -35,12 +35,6 @@ import { AuthModule } from './auth/auth.module';
         /* istanbul ignore next */
         const redisConfig = configService.get('REDIS');
         const cacheConfig = configService.get('CACHE');
-        console.log(
-          'CONFIG REDIS*************',
-          redisConfig.host,
-          redisConfig.port,
-          cacheConfig.ttl,
-        );
         /* istanbul ignore next */
         return {
           store: redisStore,
@@ -48,6 +42,8 @@ import { AuthModule } from './auth/auth.module';
           host: redisConfig.host,
           port: redisConfig.port,
           ttl: cacheConfig.ttl,
+          password: redisConfig.password, // no need it in local
+          user: redisConfig.user, // no need it in local
         };
       },
     }),
@@ -56,17 +52,12 @@ import { AuthModule } from './auth/auth.module';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
         /* istanbul ignore next */
-        const node_env = configService.get('NODE_ENV');
-        const dbHost = configService.get('DB_HOST');
+        // const node_env = configService.get('NODE_ENV');
+        // const dbHost = configService.get('DB_HOST');
+        const dbName = configService.get('DB_NAME');
         const mongoConfig = configService.get('MONGO_URL');
-        console.log(
-          '🚀 ~ file: app.module.ts:24 ~ mongoConfig:',
-          node_env,
-          dbHost,
-          mongoConfig,
-        );
         /* istanbul ignore next */
-        return { uri: mongoConfig };
+        return { uri: mongoConfig, dbName: dbName };
       },
     }),
     ThrottlerModule.forRootAsync({
@@ -74,12 +65,6 @@ import { AuthModule } from './auth/auth.module';
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
         const throttlerConfig = configService.get('REQUEST_RATE_LIMIT');
-        console.log(
-          '🚀 ~ file: app.module.ts:76 ~ useFactory: ~ throttlerConfig:',
-          throttlerConfig.ttl,
-          throttlerConfig.limit,
-        );
-
         return [
           {
             ttl: throttlerConfig.ttl,
